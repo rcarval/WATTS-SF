@@ -1,0 +1,220 @@
+<apex:page standardController="Case" extensions="SEIDOR_ResumenTicketController" applyBodyTag="false"  docType="html-5.0" standardStyleSheets="false" renderAs="pdf" action="{!savePdfToCase}">
+
+    <!-- Variables de estilos reutilizables -->
+    <apex:variable var="stTicket" value="font-family: Arial, Helvetica, sans-serif; font-size:26px; color:#6e6e6e;" />
+    <apex:variable var="stContact" value="font-family: Arial, Helvetica, sans-serif; font-size:14px; line-height:14px;" />
+    <apex:variable var="stLabel" value="font-family: Arial, Helvetica, sans-serif; font-size:11px; line-height:20px; font-weight:bold;"/>
+    <apex:variable var="stValue" value="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height:20px;" />
+    <apex:variable var="stDateLabel" value="font-family: Arial, Helvetica, sans-serif; font-size:11px; line-height:18px; font-weight:bold;"/>
+    <apex:variable var="stDateValue" value="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height:18px;" />
+    <apex:variable var="stTable" value="width:100%; border-collapse:collapse; font-family: Arial, Helvetica, sans-serif; font-size:12px;" />
+    <apex:variable var="stDataCell" value="text-align:center; border:1px solid #000; padding:6px; " />
+    <apex:variable var="stHeaderCell" value="text-align:center; border:1px solid #000; padding:6px; font-weight:bold; background-color:  #ededed" />
+
+
+    <!-- Header: Logo y # de ticket -->
+    <apex:panelGrid columns="2" width="100%" style="margin-bottom:60px;" columnClasses="colLogo,colTicket">
+        <apex:outputPanel layout="block" style="width:180px;">
+            <apex:image value="{!URLFOR($Resource.logo)}" width="120" height="60" />
+        </apex:outputPanel>
+
+        <apex:outputPanel layout="block" style="text-align:right; width:100%; white-space:nowrap;">
+            <apex:outputText value="Ticket {!caso.CaseNumber}" style="{!stTicket}" />
+        </apex:outputPanel>
+    </apex:panelGrid>
+
+    <!-- (info contacto y registros del ticket )en 2 columnas -->
+    <apex:panelGrid columns="2" width="100%" cellpadding="0" cellspacing="0" style="margin-top:35px;">
+        <!-- Coluna Izquierda: Datos del Contacto -->
+        <apex:outputPanel layout="block" style="width:260px; text-align:left; vertical-align:top;">
+            <apex:outputPanel layout="block" style="height:20px;" />
+
+            <apex:outputPanel layout="block">
+                <apex:outputText value="{!caso.Contact.Name}" style="{!stContact}" />
+            </apex:outputPanel>
+
+            <apex:outputPanel layout="block">
+                <apex:outputText value="{!caso.Contact.MailingStreet}" style="{!stContact}" />
+            </apex:outputPanel>
+
+            <apex:outputPanel layout="block">
+                <apex:outputText value="{!caso.Contact.MailingCity}" style="{!stContact}" />
+            </apex:outputPanel>
+
+            <apex:outputPanel layout="block">
+                <apex:outputText value="{!caso.Contact.MailingCountry}" style="{!stContact}" />
+            </apex:outputPanel>
+
+            <apex:outputPanel layout="block">
+                <apex:outputText value="{!caso.Contact.Phone}" style="{!stContact}" />
+            </apex:outputPanel>
+
+            <!-- Descripción -->
+            <apex:outputPanel layout="block" style="margin-top:25px;">
+                <apex:outputText value="Descripción de incidente:" style="font-size:14px; font-weight:bold;" />
+                <apex:outputPanel layout="block" style="margin-top:6px;">
+                    <apex:outputText value="{!caso.Description}" style="font-size:13px; line-height:16px;" />
+                </apex:outputPanel>
+            </apex:outputPanel>
+        </apex:outputPanel>
+
+        <!-- Columna derecha: Etiqueta y valor campos ticket -->
+        <apex:outputPanel layout="block" style="vertical-align:top; padding-left:50px;">
+            <apex:panelGrid columns="2" cellpadding="0" cellspacing="0" style="width:100%;">
+                <apex:outputText value="ID Ticket:" style="{!stLabel}" />
+                <apex:outputText value="{!caso.CaseNumber}" style="{!stValue}" />
+
+                <apex:outputText value="Tipo de ticket:" style="{!stLabel}" />
+                <apex:outputText value="{!caso.TIPO__c}" style="{!stValue}" />
+
+                <apex:outputText value="Procesador:" style="{!stLabel}" />
+                <apex:outputText value="{!caso.Owner.Name}" style="{!stValue}" />
+
+                <apex:outputText value="Asunto:" style="{!stLabel}" />
+                <apex:outputText value="{!caso.Subject}" style="{!stValue}" />
+
+                <apex:outputText value="Canal:" style="{!stLabel}" />
+                <apex:outputText value="{!caso.Origin}" style="{!stValue}" />
+
+                <apex:outputText value="Estado:" style="{!stLabel}" />
+                <apex:outputText value="{!caso.Status}" style="{!stValue}" />
+
+                <apex:outputText value="Escalado:" style="{!stLabel}" />
+                <apex:outputText value="{!caso.IsEscalated}" style="{!stValue}" />
+
+                <apex:outputText value="Prioridad:" style="{!stLabel}" />
+                <apex:outputText value="{!caso.Priority}" style="{!stValue}" />
+
+                <apex:outputText value="Categoría de servicio:" style="{!stLabel}" />
+                <apex:outputText value="{!caso.CATEGORIA_DE_SERVICIO__c}" style="{!stValue}" />
+
+                <apex:outputText value="Motivo:" style="{!stLabel}" />
+                <apex:outputText value="{!caso.MOTIVO__c}" style="{!stValue}" />
+
+                <apex:outputText value="Sub-motivo:" style="{!stLabel}" />
+                <apex:outputText value="{!caso.SUBMOTIVO__c}" style="{!stValue}" />
+            </apex:panelGrid>
+        </apex:outputPanel>
+    </apex:panelGrid>
+
+    <!-- fechas -->
+    <apex:panelGrid columns="2" width="100%" cellpadding="0" cellspacing="0" style="margin-top:45px;">
+        <apex:outputPanel layout="block" style="width:181px; vertical-align:top;">
+            <apex:panelGrid columns="2" cellpadding="0" cellspacing="0" style="width:100%;">
+                <!-- Etiquetas -->
+                <!--  Por solicitud de cliente 
+                <apex:outputPanel layout="block" style="width:150px; white-space:nowrap;">
+                    <apex:outputText value="Fecha inicio requerimiento:" style="{!stDateLabel}" />
+                </apex:outputPanel>
+                <apex:outputPanel layout="block" style="white-space:nowrap;">
+                    <apex:outputText value="PENDIENTE" style="{!stDateValue}" />
+                </apex:outputPanel>-->
+
+                <apex:outputPanel layout="block" style="width:150px; white-space:nowrap;">
+                    <apex:outputText value="Fecha fin requerimiento:" style="{!stDateLabel}" />
+                </apex:outputPanel>
+                <apex:outputPanel layout="block" style="white-space:nowrap;">
+                    <apex:outputText value="{0,date,dd/MM/yyyy}" style="{!stDateValue}">
+                        <apex:param value="{!caso.ClosedDate}" />
+                    </apex:outputText>
+                </apex:outputPanel>
+            </apex:panelGrid>
+        </apex:outputPanel>
+
+        <!-- Derecha: Reportado en -->
+        <apex:outputPanel layout="block" style="vertical-align:top; padding-left:0px;">
+            <apex:panelGrid columns="2" cellpadding="0" cellspacing="0" style="width:100%;">
+
+                <apex:outputPanel layout="block" style="width:70px; white-space:nowrap;">
+                    <apex:outputText value="Reportado en:" style="{!stDateLabel}" />
+                </apex:outputPanel>
+                <apex:outputPanel layout="block" style="white-space:nowrap;">
+                    <apex:outputText value="{0,date,dd/MM/yyyy}" style="{!stDateValue}">
+                        <apex:param value="{!caso.CreatedDate}" />
+                    </apex:outputText>
+                </apex:outputPanel>
+
+                <apex:outputPanel layout="block">&nbsp;
+                </apex:outputPanel>
+                <apex:outputPanel layout="block">&nbsp;
+                </apex:outputPanel>
+
+            </apex:panelGrid>
+        </apex:outputPanel>
+
+    </apex:panelGrid>
+
+    <apex:outputPanel layout="block" style="height:45px;"></apex:outputPanel>
+
+    <apex:outputText value="Producto" style="font-family: Arial, Helvetica, sans-serif; font-size:12px; font-weight:bold;" />
+    <apex:outputPanel layout="block" style="height:8px;">
+    </apex:outputPanel>
+
+    <!-- Tabla Producto -->
+    <table style="{!stTable}" cellspacing="0" cellpadding="0">
+    <tr>
+        <th style="{!stHeaderCell}">ID</th>
+        <th style="{!stHeaderCell}">Descripción</th>
+        <th style="{!stHeaderCell}">
+            Cantidad<br/>reclamada
+        </th>
+        <th style="{!stHeaderCell}">
+            Cant. a<br/>reponer
+        </th>
+        <th style="{!stHeaderCell}">
+            Cantidad<br/>devuelta
+        </th>
+        <th style="{!stHeaderCell}">
+            Fecha<br/>vencimiento
+        </th>
+        <th style="{!stHeaderCell}">Lote</th>
+    </tr>
+    <tr>
+        <td style="{!stDataCell}">
+            <apex:outputText value="{!caso.Product.cgcloud__Consumer_Goods_Product_Code__c}"/>
+        </td>
+
+        <td style="{!stDataCell}">
+            <apex:outputText value="{!caso.Product.Name}"/>
+        </td>
+
+        <td style="{!stDataCell}">
+            <apex:outputText value="{!caso.CANTIDAD_RECLAMADA_POR_CONSUMIDOR__c}"/>
+        </td>
+
+        <td style="{!stDataCell}">
+            <apex:outputText value="{!caso.CANTIDAD_A_REPONER_POR_WATT_S__c}"/>
+        </td>
+
+        <td style="{!stDataCell}">
+            <apex:outputText value="PENDIENTE"/>
+        </td>
+
+        <td style="{!stDataCell}">
+            <apex:outputText value="{0,date,dd/MM/yyyy}">
+                <apex:param value="{!caso.FECHA_DE_VENCIMIENTO__c}" />
+            </apex:outputText>
+        </td>
+
+        <td style="{!stDataCell}">
+            <apex:outputText value="{!caso.LOTE__c}"/>
+        </td>
+    </tr>
+</table>
+
+
+    <!--firma -->
+    <apex:outputPanel layout="block" style="height:230px;">
+    </apex:outputPanel>
+
+    <apex:panelGrid columns="1" width="100%" cellpadding="0" cellspacing="0">
+        <apex:outputPanel layout="block" style="text-align:center;">
+            <apex:outputPanel layout="block" style="width:250px; margin:0 auto; border-top:1px solid #000; height:10px;">
+            </apex:outputPanel>
+            <apex:outputPanel layout="block" style="height:0px;">
+            </apex:outputPanel>
+            <apex:outputText value="Firma de Consumidor" style="font-family: Arial, Helvetica, sans-serif; font-size:13px;" />
+        </apex:outputPanel>
+    </apex:panelGrid>
+
+</apex:page>

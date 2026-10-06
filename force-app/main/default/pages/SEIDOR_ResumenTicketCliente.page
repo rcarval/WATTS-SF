@@ -1,0 +1,168 @@
+<apex:page standardController="Case" extensions="SEIDOR_ResumenTicketController" applyBodyTag="false"  docType="html-5.0" standardStyleSheets="false" renderAs="pdf" action="{!savePdfToCase}">
+
+    <!-- Variables de estilos reutilizables -->
+    <apex:variable var="stTicket" value="font-family: Arial, Helvetica, sans-serif; font-size:17px; color:#6e6e6e;" />
+    <apex:variable var="stTitle" value="font-family: Arial, Helvetica, sans-serif; font-size:26px; font-weight:bold;" />
+    <apex:variable var="stContact" value="font-family: Arial, Helvetica, sans-serif; font-size:14px; line-height:14px;" />
+    <apex:variable var="stLabel" value="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height:20px; font-weight:bold;"/>
+    <apex:variable var="stValue" value="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height:20px;" />
+    <apex:variable var="stDateLabel" value="font-family: Arial, Helvetica, sans-serif; font-size:11px; line-height:18px; font-weight:bold;"/>
+    <apex:variable var="stDateValue" value="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height:18px;" />
+    <apex:variable var="stTable" value="width:100%; border-collapse:collapse; font-family: Arial, Helvetica, sans-serif; font-size:12px;" />
+    <apex:variable var="stDataCell" value="text-align:center; border:1px solid #000; padding:6px; " />
+    <apex:variable var="stHeaderCell" value="text-align:center; border:1px solid #000; padding:6px; font-weight:bold; background-color: #ededed" />
+
+
+    <!-- Header: Logo y # de ticket -->
+    <apex:panelGrid columns="3" width="100%" style="margin-bottom:60px;" columnClasses="colLogo,colTicket">
+        <apex:outputPanel layout="block" style="width:180px;">
+            <apex:image value="{!URLFOR($Resource.logo)}" width="120" height="60" />
+        </apex:outputPanel>
+
+        <apex:outputPanel layout="block" style="text-align:center; vertical-align:top; white-space:nowrap;">
+            <apex:outputText value="Orden de retiro" style="{!stTitle}" />
+        </apex:outputPanel>
+
+        <apex:outputPanel layout="block" style="text-align:right; width:220px;  vertical-align:top; white-space:nowrap;">
+            <apex:outputText value="Ticket {!caso.CaseNumber}" style="{!stTicket}" />
+        </apex:outputPanel>
+    </apex:panelGrid>
+
+    <!-- (info contacto y registros del ticket )en 2 columnas -->
+    <apex:panelGrid columns="2" width="100%" cellpadding="0" cellspacing="0" style="margin-top:10px;">
+        <!-- Coluna Izquierda: Datos del Contacto -->
+        <apex:outputPanel layout="block" style="width:240px; text-align:left; vertical-align:top; padding-top:13px;">
+            <apex:outputPanel layout="block">
+                <apex:outputText value="Dirección:" style="font-family: Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; font-weight:bold;" />
+            </apex:outputPanel>
+            <apex:outputPanel layout="block">
+                <apex:outputText value="{!caso.Account.Name}" style="{!stContact}" />
+            </apex:outputPanel>
+
+            <apex:outputPanel layout="block">
+                <apex:outputText value="{!caso.Account.BillingStreet}" style="{!stContact}" />
+            </apex:outputPanel>
+
+            <apex:outputPanel layout="block">
+                <apex:outputText value="{!caso.Account.BillingCity}" style="{!stContact}" />
+            </apex:outputPanel>
+
+            <apex:outputPanel layout="block">
+                <apex:outputText value="{!caso.Account.BillingCountry}" style="{!stContact}" />
+            </apex:outputPanel>
+
+        </apex:outputPanel>
+
+        <!-- Columna derecha: Etiqueta y valor campos ticket -->
+        <apex:outputPanel layout="block" style="vertical-align:top; padding-left:50px;">
+            <apex:panelGrid columns="2" cellpadding="0" cellspacing="0" style="width:100%;">
+                <apex:outputText value="Cliente" style="{!stLabel}" />
+                <apex:outputText value="{!caso.Account.cgcloud__Name_2__c}" style="{!stValue}" />
+
+                <apex:outputText value="Código Cliente:" style="{!stLabel}" />
+                <apex:outputText value="{!caso.Codigo_del_cliente__c}" style="{!stValue}" />
+
+                <apex:outputText value="Fecha:" style="{!stLabel}" />
+                <apex:outputText value="{0,date,dd MMM yyyy}" style="{!stValue}">
+                    <apex:param value="{!TODAY()}" />
+                </apex:outputText>
+
+                <apex:outputText value="Código Camión:" style="{!stLabel}" />
+                <apex:outputText value="{!caso.Codigo_del_transporte__c}" style="{!stValue}" />
+
+                <apex:outputText value="Nombre Chofer:" style="{!stLabel}" />
+                <apex:outputText value="{!caso.Nombre_Chofer__c}" style="{!stValue}" />
+
+            </apex:panelGrid>
+        </apex:outputPanel>
+    </apex:panelGrid>
+
+
+    <apex:outputPanel layout="block" style="height:130px;"></apex:outputPanel>
+
+    <apex:outputText value="Producto:" style="{!stContact} font-weight:bold;" />
+    <apex:outputPanel layout="block" style="height:8px;">
+    </apex:outputPanel>
+
+                <!-- Nota -->
+    <apex:outputPanel layout="block" style="margin-top:15px;">
+        <apex:outputText value="Nota: No se puede retirar más de la cantidad autorizada" style="{!stContact}" />
+        <apex:outputPanel layout="block" style="margin-top:6px;"></apex:outputPanel>
+     </apex:outputPanel>
+
+     <apex:outputPanel layout="block" style="margin-top:30px;"></apex:outputPanel>
+
+    <!-- Tabla Producto -->
+    <table style="{!stTable}" cellspacing="0" cellpadding="0">
+    <tr>
+        <th style="{!stHeaderCell}">Nombre</th>
+        <th style="{!stHeaderCell}">Codigo</th>
+        <th style="{!stHeaderCell}">Lote</th>
+        <th style="{!stHeaderCell}">
+            Fecha<br/>vencimiento
+        </th>
+        <th style="{!stHeaderCell}">Motivo</th>
+        <th style="{!stHeaderCell}">
+            Cantidad<br/>Autorizada
+        </th>
+        <th style="{!stHeaderCell}">
+            Cantidad<br/>Retirada</th>
+    </tr>
+    <tr>
+        <td style="{!stDataCell}">
+            <apex:outputText value="{!caso.Product.Name}"/>
+        </td>
+        <td style="{!stDataCell}">
+            <apex:outputText value="{!caso.Product.cgcloud__Consumer_Goods_Product_Code__c}"/>
+        </td>
+
+        <td style="{!stDataCell}">
+            <apex:outputText value="{!caso.LOTE__c}"/>
+        </td>
+
+        <td style="{!stDataCell}">
+            <apex:outputText value="{0,date,dd/MM/yyyy}">
+                <apex:param value="{!caso.FECHA_DE_VENCIMIENTO__c}" />
+            </apex:outputText>
+        </td>
+
+        <td style="{!stDataCell}">
+            <apex:outputText value="{!caso.MOTIVO__c}"/>
+        </td>
+
+        <td style="{!stDataCell}">
+            <apex:outputText value="RETIRADO"/>
+        </td>
+
+        <td style="{!stDataCell}">
+            <apex:outputText value="{!caso.CANTIDAD_RECLAMADA_POR_CONSUMIDOR__c}"/>
+        </td>
+
+    </tr>
+</table>
+
+
+    <!--firma -->
+    <apex:outputPanel layout="block" style="height:120px;">
+    </apex:outputPanel>
+
+    <apex:panelGrid columns="2" width="100%" cellpadding="0" cellspacing="0">
+        <apex:outputPanel layout="block" style="text-align:center;  vertical-align:top;">
+            <apex:outputPanel layout="block" style="width:250px; margin:0 auto; border-top:1px solid #000; height:10px;">
+            </apex:outputPanel>
+            <apex:outputText value="Nombre, RUT y Firma Cliente" style="font-family: Arial, Helvetica, sans-serif; font-size:13px;" />
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" style="text-align:center;  vertical-align:top; padding-top:20px">
+            <apex:outputPanel layout="block" style="width:250px; margin:0 auto; border-top:1px solid #000; height:10px; ">
+            </apex:outputPanel>
+            <apex:outputPanel layout="block" style="height:0px;">
+                 <apex:outputText value="Nombre y Firma Conductor" style="font-family: Arial, Helvetica, sans-serif; font-size:13px;" />
+            </apex:outputPanel>
+            <apex:outputPanel layout="block" style="margin-top:20px;">
+             <apex:outputText value="Código:" style="font-family: Arial, Helvetica, sans-serif; font-size:13px; display:inline-block; text-align:left; width:160px;" />
+        </apex:outputPanel>
+        </apex:outputPanel>
+    </apex:panelGrid>
+    
+
+</apex:page>

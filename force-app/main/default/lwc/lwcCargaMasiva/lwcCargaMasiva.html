@@ -1,0 +1,85 @@
+<template>
+    <lightning-card title="Carga masiva de ítems de pedido" icon-name="standard:orders">
+        <div class="slds-p-around_medium">
+
+            <lightning-radio-group
+                name="modoCarga"
+                label="Modo de carga"
+                options={opcionesModoCarga}
+                value={modoCarga}
+                type="button"
+                onchange={handleCambioModo}>
+            </lightning-radio-group>
+
+            <template if:true={esModoPegado}>
+                <div class="slds-m-top_small">
+                    <lightning-textarea
+                        label="Pegar desde Excel (headers en la primera fila)"
+                        value={contenidoPegado}
+                        onchange={handleCambioPegado}
+                        placeholder="cgcloud__Order_Item_Template__c<TAB>cgcloud__Product__c<TAB>cgcloud__Quantity__c">
+                    </lightning-textarea>
+
+                    <div class="slds-m-top_small">
+                        <lightning-button
+                            label="Previsualizar"
+                            onclick={previsualizarDesdePegado}
+                            disabled={cargando}>
+                        </lightning-button>
+                    </div>
+                </div>
+            </template>
+
+            <template if:true={esModoArchivo}>
+                <div class="slds-m-top_small">
+                    <lightning-input
+                        data-id="inputArchivo"
+                        type="file"
+                        label="Subir CSV"
+                        accept=".csv"
+                        onchange={handleCambioArchivo}>
+                    </lightning-input>
+
+                    <template if:true={nombreArchivo}>
+                        <p class="slds-m-top_x-small">Archivo: <strong>{nombreArchivo}</strong></p>
+                    </template>
+
+                    <div class="slds-m-top_small">
+                        <lightning-button
+                            label="Previsualizar"
+                            onclick={previsualizarDesdeArchivo}
+                            disabled={deshabilitarPrevisualizarArchivo}>
+                        </lightning-button>
+                    </div>
+                </div>
+            </template>
+
+            <template if:true={hayPrevisualizacion}>
+                <div class="slds-m-top_medium slds-text-title_bold">
+                    Previsualización (primeras {tamanoPrevisualizacion} filas)
+                </div>
+
+                <div class="slds-m-top_x-small">
+                    <lightning-datatable
+                        key-field="__rowKey"
+                        data={datosPrevisualizacion}
+                        columns={columnasPrevisualizacion}
+                        hide-checkbox-column>
+                    </lightning-datatable>
+                </div>
+
+                <div class="slds-m-top_small slds-grid slds-grid_align-end">
+                    <lightning-button label="Limpiar" variant="neutral" onclick={limpiarTodo}></lightning-button>
+                    <lightning-button class="slds-m-left_small" label="Cargar ítems" variant="brand" onclick={guardar} disabled={cargando}></lightning-button>
+                </div>
+            </template>
+
+            <template if:true={cargando}>
+                <div class="slds-m-top_medium">
+                    <lightning-spinner alternative-text="Procesando..." size="medium"></lightning-spinner>
+                </div>
+            </template>
+
+        </div>
+    </lightning-card>
+</template>

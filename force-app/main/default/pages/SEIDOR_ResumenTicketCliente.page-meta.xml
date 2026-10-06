@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <availableInTouch>false</availableInTouch>
+    <confirmationTokenRequired>false</confirmationTokenRequired>
+    <label>SEIDOR_ResumenTicketCliente</label>
+    <packageVersions>
+        <majorNumber>258</majorNumber>
+        <minorNumber>4</minorNumber>
+        <namespace>cgcloud</namespace>
+    </packageVersions>
+</ApexPage>

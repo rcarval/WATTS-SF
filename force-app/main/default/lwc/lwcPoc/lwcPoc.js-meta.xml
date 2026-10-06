@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata" fqn="lwcPoc">
+    <apiVersion>60.0</apiVersion>
+    <isExposed>true</isExposed>
+
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__HomePage</target>
+        <target>lightning__RecordPage</target>
+        <target>lightning__UtilityBar</target>
+    </targets>
+
+    <targetConfigs>
+        <targetConfig targets="lightning__AppPage,lightning__HomePage,lightning__RecordPage,lightning__UtilityBar">
+            <property name="highlightUtilityOnEvent" type="Boolean" default="false" label="Highlight Utility on Event"/>
+            <property name="filterByAgentEmail" type="Boolean" default="false" label="Filter by Agent Email"/>
+            <property name="openUtilityOnEvent" type="Boolean" default="false" label="Open Utility on Event"/>
+            <property name="showToastOnEvent" type="Boolean" default="false" label="Show Toast on Event"/>
+            <property name="maxMessages" type="Integer" default="20" label="Max Messages"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

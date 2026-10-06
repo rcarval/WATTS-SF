@@ -1,0 +1,97 @@
+<template>
+    <section class="slds-p-around_small">
+
+        <!-- 🔔 BANNER FIJO (toast persistente interno) -->
+        <template if:true={hasActiveNotification}>
+            <div class="slds-notify slds-notify_alert slds-theme_info slds-m-bottom_small" role="alert">
+                <span class="slds-assistive-text">Información</span>
+
+                <div class="slds-grid slds-grid_vertical-align-center slds-grid_align-spread">
+                    <div>
+                        <strong>CTI – Nueva llamada</strong><br />
+                        <span>{activeNotificationText}</span>
+
+                        <template if:true={activeNotificationTimestamp}>
+                            <div class="slds-text-color_weak slds-text-body_small">
+                                {activeNotificationTimestamp}
+                            </div>
+                        </template>
+
+                        <!-- 🔗 LINK GENÉRICO (HTML) -->
+                        <div class="slds-m-top_x-small">
+                            <template if:true={activeLinkUrl}>
+                            <div class="slds-m-top_x-small">
+                                <a href={activeLinkUrl}
+                                target="_blank"
+                                rel="noopener noreferrer">
+                                    {activeLinkLabel}
+                                </a>
+                            </div>
+                        </template>
+                        </div>
+                    </div>
+
+                    <lightning-button-icon
+                        icon-name="utility:close"
+                        variant="bare"
+                        alternative-text="Cerrar"
+                        onclick={handleDismissNotification}>
+                    </lightning-button-icon>
+                </div>
+            </div>
+        </template>
+
+        <!-- HEADER -->
+        <div class="slds-grid slds-grid_align-spread slds-m-bottom_small">
+            <div class="slds-text-heading_small">
+                CTI - Eventos
+                <template if:true={hasMessages}>
+                    <span class="slds-badge slds-m-left_x-small">{messageCount}</span>
+                </template>
+            </div>
+
+            <lightning-button
+                label="Limpiar"
+                variant="neutral"
+                onclick={handleClear}
+                disabled={isClearDisabled}>
+            </lightning-button>
+        </div>
+
+        <!-- HISTORIAL -->
+        <template if:true={hasMessages}>
+            <ul class="slds-has-dividers_bottom-space">
+                <template for:each={messages} for:item="m">
+                    <li key={m.id} class="slds-item slds-p-vertical_x-small">
+                        <div>
+                            <strong>{m.customerPhone}</strong>
+                            <span class="slds-text-color_weak"> | {m.correoAgente}</span>
+                        </div>
+                        <div class="slds-text-color_weak slds-text-body_small">
+                            {m.timestamp}
+                        </div>
+
+                        <!-- 🔗 LINK GENÉRICO POR ITEM -->
+                        <div class="slds-m-top_x-small">
+                            <template if:true={m.contactUrl}>
+                                <div class="slds-m-top_x-small">
+                                    <a href={m.contactUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer">
+                                        {m.contactLinkLabel}
+                                    </a>
+                                </div>
+                            </template>
+                        </div>
+                    </li>
+                </template>
+            </ul>
+        </template>
+
+        <template if:false={hasMessages}>
+            <div class="slds-text-color_weak slds-m-top_medium">
+                Sin eventos todavía.
+            </div>
+        </template>
+    </section>
+</template>
